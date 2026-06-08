@@ -1,0 +1,4 @@
+interface:
+  display_name: "Workflow Packaging Review"
+  short_description: "Package repeated workflows from evidence."
+  default_prompt: "Review recent sessions, memories, activity logs, and existing reusable assets. Shortlist repeated workflows and create only the smallest high-confidence missing skill, subagent, automation, or settings update."

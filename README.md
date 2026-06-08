@@ -201,7 +201,7 @@ git clone https://github.com/alchaincyf/nuwa-skill <上面对应的路径>
 
 ## 已蒸馏人物
 
-女娲已蒸馏了13位人物 + 1个主题。每个都是独立的、可直接安装使用的Skill，全部基于 Agent Skills 协议，可在 Claude Code / Codex / Cursor / OpenClaw / Hermes 等 runtime 通用：
+女娲已蒸馏了13位人物 + 2个主题。每个都是独立的、可直接安装使用的Skill，全部基于 Agent Skills 协议，可在 Claude Code / Codex / Cursor / OpenClaw / Hermes 等 runtime 通用：
 
 ### 人物Skill
 
@@ -225,6 +225,7 @@ git clone https://github.com/alchaincyf/nuwa-skill <上面对应的路径>
 | 主题 | 领域 | 独立仓库 | 一键安装（跨 runtime） |
 |------|------|---------|---------|
 | **X导师** | X/Twitter运营全栈 | [x-mentor-skill](https://github.com/alchaincyf/x-mentor-skill) | `npx skills add alchaincyf/x-mentor-skill` |
+| **Moomoo Equity Research Analyst** | 上市公司投研/商业模式/财务取证 | 本仓库示例：`examples/moomoo-equity-research-analyst` | 手动安装到 runtime skills 目录 |
 
 人物Skill蒸馏一个人的思维方式；主题Skill蒸馏一个领域的方法论。每个仓库都包含完整的调研数据和效果示例对话。
 
@@ -276,7 +277,7 @@ nuwa-skill/
 ├── references/
 │   ├── extraction-framework.md   # 提炼方法论（想深入了解看这个）
 │   └── skill-template.md         # 生成Skill的模板
-└── examples/                          # 13个人物 + 1个主题，含完整调研数据
+└── examples/                          # 人物、主题与协作流程Skill示例
     ├── steve-jobs-perspective/        # ⭐ 乔布斯（含实战对话记录）
     ├── paul-graham-perspective/       # Paul Graham
     ├── zhang-yiming-perspective/      # 张一鸣
@@ -289,7 +290,9 @@ nuwa-skill/
     ├── feynman-perspective/           # 费曼
     ├── naval-perspective/             # Naval Ravikant
     ├── taleb-perspective/             # 塔勒布
-    └── x-mastery-mentor/             # X导师（主题Skill）
+    ├── x-mastery-mentor/              # X导师（主题Skill）
+    ├── moomoo-equity-research-analyst/ # Moomoo上市公司投研（主题Skill）
+    └── workflow-packaging-review/     # 协作流程蒸馏（Skill/Agent/Automation）
 ```
 
 调研过程全透明。每个example都包含完整的调研文件，你可以看到信息怎么被收集、筛选、变成心智模型。乔布斯的示例还附带了一段完整的实战对话记录（聊AI硬件、OpenAI vs Anthropic、Apple破局），展示Skill在多轮深度对话中的表现。

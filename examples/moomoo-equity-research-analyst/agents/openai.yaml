@@ -1,0 +1,5 @@
+interface:
+  display_name: "Moomoo Equity Research Analyst"
+  short_description: "Turn moomoo data into company research."
+  default_prompt: "Use $moomoo-equity-research-analyst to analyze a public company with moomoo data, filings, search evidence, business-model reasoning, and next hypotheses."
+
