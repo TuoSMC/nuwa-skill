@@ -43,6 +43,12 @@ If a status is unavailable or expired and the user has asked for automatic login
 python3 /Users/tuocheng/.codex/skills/agent-trio-orchestrator/scripts/agent_trio.py health --login-if-needed
 ```
 
+If the user asks to confirm the trio can actually answer, not just that auth exists, run the costlier wrapper smoke test:
+
+```bash
+python3 /Users/tuocheng/.codex/skills/agent-trio-orchestrator/scripts/agent_trio.py health --smoke
+```
+
 The script starts only official CLI login flows:
 
 - Grok: `grok login --oauth` in an interactive terminal, or `grok login --device-auth` in a headless terminal.
@@ -77,3 +83,4 @@ Keep prompts narrow. Use sanitized summaries for private/internal material. Veri
 - `scripts/install-agent-trio-windows.ps1`: Windows bootstrap script.
 - `tests/test_agent_trio.py`: unit tests for the deterministic Python helper.
 - `references/official-install-sources.md`: current official install references checked while creating this skill.
+- `references/runtime-wrapper-fixes.md`: wrapper hardening notes for the Adam/Claude smoke path.

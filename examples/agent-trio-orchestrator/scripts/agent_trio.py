@@ -34,6 +34,7 @@ class ProbeResult:
     detail: str = ""
     login_attempted: bool = False
     login_status: str | None = None
+    smoke_status: str | None = None
 
     @property
     def ok(self) -> bool:
@@ -125,6 +126,16 @@ def probe_eva(login_if_needed: bool, login_timeout: int, check_timeout: int) -> 
     )
 
 
+def smoke_eva(timeout: int) -> tuple[bool, str]:
+    eva = resolve_executable("EVA_BIN", "/Users/tuocheng/.Grok/bin/eva", "eva")
+    if not eva:
+        return False, "eva wrapper not found"
+    result = run_capture([eva, "--private", "Return exactly: EVA online"], timeout=timeout)
+    if result.returncode == 0:
+        return True, "eva wrapper returned successfully"
+    return False, summarize_failure(result)
+
+
 def probe_kloe(login_if_needed: bool, login_timeout: int, check_timeout: int) -> ProbeResult:
     role = "Antigravity-backed alternative-framing and evidence-gap reviewer"
     agy = resolve_executable("AGY_BIN", "/Users/tuocheng/.local/bin/agy", "agy")
@@ -160,6 +171,16 @@ def probe_kloe(login_if_needed: bool, login_timeout: int, check_timeout: int) ->
     )
 
 
+def smoke_kloe(timeout: int) -> tuple[bool, str]:
+    kloe = resolve_executable("KLOE_BIN", "/Users/tuocheng/.Antigravity/bin/kloe", "kloe")
+    if not kloe:
+        return False, "kloe wrapper not found"
+    result = run_capture([kloe, "-p", "Return exactly: Kloe online"], timeout=timeout)
+    if result.returncode == 0:
+        return True, "kloe wrapper returned successfully"
+    return False, summarize_failure(result)
+
+
 def probe_adam(login_if_needed: bool, login_timeout: int, check_timeout: int) -> ProbeResult:
     role = "Claude-backed final auditor, token throttle, and handoff optimizer"
     claude = resolve_executable("CLAUDE_BIN", "/Users/tuocheng/.local/bin/claude", "claude")
@@ -188,22 +209,41 @@ def probe_adam(login_if_needed: bool, login_timeout: int, check_timeout: int) ->
     )
 
 
+def smoke_adam(timeout: int) -> tuple[bool, str]:
+    adam = resolve_executable("ADAM_BIN", "/Users/tuocheng/.Claude/bin/adam", "adam")
+    if not adam:
+        return False, "adam wrapper not found"
+    result = run_capture([adam, "--private", "Return exactly: Adam online"], timeout=timeout)
+    if result.returncode == 0:
+        return True, "adam wrapper returned successfully"
+    return False, summarize_failure(result)
+
+
 def collect_health(args: argparse.Namespace) -> list[ProbeResult]:
     probes = {
         "eva": probe_eva,
         "kloe": probe_kloe,
         "adam": probe_adam,
     }
+    smokes = {
+        "eva": smoke_eva,
+        "kloe": smoke_kloe,
+        "adam": smoke_adam,
+    }
     selected = args.agent or ["eva", "kloe", "adam"]
     results = []
     for name in selected:
-        results.append(
-            probes[name](
-                args.login_if_needed,
-                args.login_timeout,
-                args.check_timeout,
-            )
+        result = probes[name](
+            args.login_if_needed,
+            args.login_timeout,
+            args.check_timeout,
         )
+        if args.smoke and result.ok:
+            ok, detail = smokes[name](args.smoke_timeout)
+            result.smoke_status = detail
+            if not ok:
+                result.status = "smoke-failed"
+        results.append(result)
     return results
 
 
@@ -217,6 +257,8 @@ def print_health(results: Iterable[ProbeResult], *, as_json: bool) -> int:
             print(f"{marker} {result.agent}: {result.status} - {result.detail}")
             if result.login_status:
                 print(f"  login: {result.login_status}")
+            if result.smoke_status:
+                print(f"  smoke: {result.smoke_status}")
             if result.command:
                 print(f"  command: {result.command}")
     return 0 if all(result.ok for result in results) else 1
@@ -306,6 +348,8 @@ def build_parser() -> argparse.ArgumentParser:
     health.add_argument("--login-if-needed", action="store_true")
     health.add_argument("--login-timeout", type=int, default=600)
     health.add_argument("--check-timeout", type=int, default=30)
+    health.add_argument("--smoke", action="store_true", help="Run wrapper smoke prompts after auth checks.")
+    health.add_argument("--smoke-timeout", type=int, default=180)
     health.set_defaults(func=lambda args: print_health(collect_health(args), as_json=args.json))
 
     wake = sub.add_parser("wake", help="Enable the trio for future Codex tasks.")
@@ -316,6 +360,8 @@ def build_parser() -> argparse.ArgumentParser:
     wake.add_argument("--login-if-needed", action="store_true")
     wake.add_argument("--login-timeout", type=int, default=600)
     wake.add_argument("--check-timeout", type=int, default=30)
+    wake.add_argument("--smoke", action="store_true", help="Run wrapper smoke prompts after auth checks.")
+    wake.add_argument("--smoke-timeout", type=int, default=180)
     wake.set_defaults(func=command_wake)
 
     report = sub.add_parser("git-report", help="List nearby git repos, remotes, branches, and dirty status.")
