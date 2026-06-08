@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Trio Orchestrator"
+  short_description: "Wake, verify, and bootstrap EVA, Kloe, and Adam for Codex work."
+  default_prompt: "Use $agent-trio-orchestrator to check whether EVA, Kloe, and Adam should assist this Codex task."
