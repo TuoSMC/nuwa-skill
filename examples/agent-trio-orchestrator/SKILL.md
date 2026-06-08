@@ -31,6 +31,15 @@ For subsequent tasks in the same session, treat the trio as available advisory r
 
 ## Health And Login
 
+Prefer the narrow login hook wrapper when the user asks for a "login hook", auth readiness, a wake flow, or a small smoke test:
+
+```bash
+python3 /Users/tuocheng/.codex/skills/agent-trio-orchestrator/scripts/login_hook.py health
+python3 /Users/tuocheng/.codex/skills/agent-trio-orchestrator/scripts/login_hook.py login
+python3 /Users/tuocheng/.codex/skills/agent-trio-orchestrator/scripts/login_hook.py wake
+python3 /Users/tuocheng/.codex/skills/agent-trio-orchestrator/scripts/login_hook.py smoke
+```
+
 Before relying on the trio, run:
 
 ```bash
@@ -80,7 +89,9 @@ Keep prompts narrow. Use sanitized summaries for private/internal material. Veri
 ## Resources
 
 - `scripts/agent_trio.py`: local health, login, wake, and Git repo status helper.
+- `scripts/login_hook.py`: small wrapper for health, login, wake, and smoke modes.
 - `scripts/install-agent-trio-windows.ps1`: Windows bootstrap script.
 - `tests/test_agent_trio.py`: unit tests for the deterministic Python helper.
+- `tests/test_login_hook.py`: unit tests for login hook argument forwarding.
 - `references/official-install-sources.md`: current official install references checked while creating this skill.
 - `references/runtime-wrapper-fixes.md`: wrapper hardening notes for the Adam/Claude smoke path.
